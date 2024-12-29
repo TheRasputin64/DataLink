@@ -15,7 +15,28 @@ class UploadHandler(http.server.SimpleHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(f.read())
                 return
-            except: pass
+            except:
+                pass
+        elif self.path == '/link.ico':
+            try:
+                with open('link.ico', 'rb') as f:
+                    self.send_response(200)
+                    self.send_header('Content-type', 'image/x-icon')
+                    self.end_headers()
+                    self.wfile.write(f.read())
+                return
+            except:
+                pass
+        elif self.path == '/favicon.ico':  # Also handle standard favicon.ico requests
+            try:
+                with open('link.ico', 'rb') as f:
+                    self.send_response(200)
+                    self.send_header('Content-type', 'image/x-icon')
+                    self.end_headers()
+                    self.wfile.write(f.read())
+                return
+            except:
+                pass
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -69,32 +90,46 @@ class UploadHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({'success': False, 'error': str(e)}).encode())
 
 HTML_TEMPLATE = """
-<!DOCTYPE html><html><head><title>NIGHT CITY DATALINK</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+<!DOCTYPE html><html><head><title>DATALINK</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="link.ico" type="image/x-icon"><style>
 @font-face{font-family:'VT323';src:url('VT323-Regular.ttf') format('truetype')}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'VT323',monospace;background-color:#0a0a0a;color:#f0f;line-height:1.4;padding:20px;background-image:linear-gradient(45deg,#0a0a0a 25%,#0f0f0f 25%,#0f0f0f 50%,#0a0a0a 50%,#0a0a0a 75%,#0f0f0f 75%,#0f0f0f);background-size:20px 20px}
-.container{max-width:1200px;margin:0 auto;width:100%;position:relative}
-.header{text-align:center;margin-bottom:30px;text-shadow:0 0 10px #f0f}
-.title{font-size:48px;margin:20px 0;letter-spacing:4px;animation:glitch 1s infinite}
-.subtitle{color:#666;margin-bottom:20px;text-transform:uppercase}
-.main-section{background-color:rgba(17,17,17,0.9);padding:20px;margin-bottom:20px;border:1px solid #f0f;box-shadow:0 0 20px rgba(255,0,255,0.2)}
-.hack-btn{background-color:#1a1a1a;border:1px solid #f0f;color:#f0f;font-family:'VT323',monospace;font-size:24px;padding:15px 40px;cursor:pointer;width:100%;max-width:300px;margin:20px auto;display:block;letter-spacing:2px;text-transform:uppercase;transition:all 0.3s}
-.hack-btn:hover{background-color:#f0f;color:#000;box-shadow:0 0 20px #f0f}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:20px 0}
-.stat-box{background-color:rgba(26,26,26,0.9);padding:10px;border:1px solid #f0f}
-.progress-container{margin:20px 0}
-.progress-bar{width:100%;height:30px;background-color:rgba(26,26,26,0.9);border:1px solid #f0f;position:relative}
-.progress{width:0%;height:100%;background:linear-gradient(90deg,#f0f,#0ff);transition:width .3s ease-in-out}
-.status-text{position:absolute;width:100%;text-align:center;top:50%;transform:translateY(-50%);color:#fff;font-size:16px;text-shadow:0 0 5px #f0f}
-.log-container{height:200px;overflow-y:auto;background-color:rgba(26,26,26,0.9);padding:10px;border:1px solid #f0f;font-size:14px;margin-top:20px}
-.log-entry{border-bottom:1px solid #f0f;padding:5px 0;color:#0ff}
-.log-time{color:#f0f}
+html,body{height:100%;overflow:hidden}
+body{font-family:'VT323',monospace;background:#0a0a0a;color:#00ff8c;display:flex;flex-direction:column}
+.container{height:100vh;display:flex;flex-direction:column;padding:1vh}
+.header{flex:0 0 12vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:rgba(0,0,0,0.7);border-left:4px solid #00ff8c;border-right:4px solid #00ff8c;padding:1vh;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:-5%;width:110%;height:100%;background:rgba(0,255,140,0.1);transform:skewX(-20deg);animation:scanline 4s linear infinite}
+.title{font-size:clamp(2rem,6vw,4.5rem);letter-spacing:0.3em;text-transform:uppercase;position:relative;text-align:center}
+.glitch-wrapper{position:relative}
+.glitch-text{animation:mainGlitch 3s infinite}
+.glitch-text::before,.glitch-text::after{content:'DATALINK';position:absolute;top:0;width:100%;height:100%;left:0}
+.glitch-text::before{color:#ff0080;animation:glitch 4s infinite;clip-path:polygon(0 0,100% 0,100% 45%,0 45%);transform:translate(-0.025em,0.0125em);opacity:0.75}
+.glitch-text::after{color:#0ff;animation:glitch 4s infinite;clip-path:polygon(0 80%,100% 20%,100% 100%,0 100%);transform:translate(0.025em,-0.0125em);opacity:0.75}
+.subtitle{font-size:clamp(1rem,2vw,1.5rem);text-transform:uppercase;letter-spacing:0.4em;color:#00ccff;text-align:center;margin-top:1vh}
+.main-section{flex:1;display:flex;flex-direction:column;gap:1vh;background:rgba(0,0,0,0.8);border-left:4px solid #00ff8c;border-right:4px solid #00ff8c;margin:1vh 0;padding:1vh}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1vh;flex:0 0 auto}
+.stat-box{background:rgba(0,255,140,0.1);border:2px solid #00ff8c;padding:1vh;display:flex;align-items:center}
+.stat-box div{font-size:clamp(0.9rem,1.8vw,1.4rem);letter-spacing:0.1em}
+.hack-btn{background:#111;border:4px solid #00ff8c;color:#00ff8c;font-family:'VT323',monospace;font-size:clamp(2rem,5vw,4rem);cursor:pointer;width:100%;margin:1vh 0;padding:2vh;display:flex;align-items:center;justify-content:center;letter-spacing:0.3em;text-transform:uppercase;transition:all 0.2s;flex:0 0 auto;min-height:10vh}
+.hack-btn:hover{background:#00ff8c;color:#000}
+.progress-container{flex:0 0 6vh;margin:1vh 0}
+.progress-bar{width:100%;height:100%;background:rgba(0,0,0,0.8);border:2px solid #00ff8c;position:relative;overflow:hidden}
+.progress{width:0%;height:100%;background:#00ff8c;transition:width .3s ease-in-out}
+.status-text{position:absolute;width:100%;text-align:center;top:50%;transform:translateY(-50%);mix-blend-mode:difference;color:#fff;font-size:clamp(0.9rem,2vw,1.4rem);letter-spacing:0.2em}
+.log-container{flex:1;min-height:0;max-height:250px; background:rgba(0,0,0,0.8);border:2px solid #00ff8c;padding:1vh;font-size:clamp(0.8rem,1.6vw,1.2rem);overflow-y:auto}
+.log-entry{border-bottom:1px solid #00ff8c;padding:0.5vh 0;color:#00ccff}
+.log-time{color:#00ff8c}
 #file-input{display:none}
-.footer{text-align:center;color:#f0f;margin-top:20px;font-size:14px;text-shadow:0 0 5px #f0f}
-@keyframes glitch{0%{text-shadow:2px 2px #f0f,-2px -2px #0ff}50%{text-shadow:-2px 2px #f0f,2px -2px #0ff}100%{text-shadow:2px -2px #f0f,-2px 2px #0ff}}
-@media (max-width:768px){.title{font-size:32px}.stats-grid{grid-template-columns:1fr}}
+.footer{flex:0 0 5vh;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);border-left:4px solid #00ff8c;border-right:4px solid #00ff8c;color:#00ff8c;font-size:clamp(0.7rem,1.4vw,1rem);letter-spacing:0.2em}
+@keyframes scanline{0%{transform:translateY(-100%) skewX(-20deg)}100%{transform:translateY(200%) skewX(-20deg)}}
+@keyframes mainGlitch{0%,100%{opacity:1}35%,65%{opacity:0.95}36%,64%{opacity:1}37%,63%{opacity:0.95}}
+@keyframes glitch{0%{clip-path:inset(40% 0 61% 0)}20%{clip-path:inset(92% 0 1% 0)}40%{clip-path:inset(43% 0 1% 0)}60%{clip-path:inset(25% 0 58% 0)}80%{clip-path:inset(54% 0 7% 0)}100%{clip-path:inset(58% 0 43% 0)}}
 </style></head><body><div class="container">
-<div class="header"><div class="subtitle">NIGHT CITY SECURE DATA EXTRACTION v2.0.7.7</div></div>
+<div class="header">
+<div class="glitch-wrapper">
+<h1 class="title glitch-text">DATALINK</h1>
+</div>
+<div class="subtitle">NEURAL INTERFACE READY</div>
+</div>
 <div class="main-section">
 <div class="stats-grid">
 <div class="stat-box"><div>STATUS: <span id="status">READY</span></div></div>
@@ -109,8 +144,10 @@ body{font-family:'VT323',monospace;background-color:#0a0a0a;color:#f0f;line-heig
 <div class="progress"></div>
 <div class="status-text">WAITING FOR NEURAL LINK</div>
 </div></div>
-<div class="log-container" id="log"></div></div>
-<div class="footer">CREATED BY THERASPUTIN64 | NIGHT CITY NETWORKS</div></div>
+<div class="log-container" id="log"></div>
+</div>
+<div class="footer">CREATED BY THERASPUTIN64 | NIGHT CITY NETWORKS</div>
+</div>
 <script>
 const l=document.getElementById('log'),p=document.querySelector('.progress'),s=document.querySelector('.status-text'),f=document.getElementById('file-input');let t=0,u=0,d=0;
 function a(m){const t=new Date().toLocaleTimeString(),e=document.createElement('div');e.className='log-entry';e.innerHTML=`<span class="log-time">[${t}]</span> ${m}`;l.appendChild(e);l.scrollTop=l.scrollHeight}
@@ -134,7 +171,7 @@ def signal_handler(sig, frame):
     os._exit(0)
 
 if __name__ == '__main__':
-    PORT = 8080
+    PORT = 8081
     signal.signal(signal.SIGINT, signal_handler)
     
     print("""
