@@ -1,6 +1,6 @@
 ![HELP](DataCore/join.gif) <br>
 
-> A cyberpunk-themed file upload interface that probably shouldn't exist...
+> A local network file upload interface that probably shouldn't exist...
 
 ```
 └── DATALINK/
